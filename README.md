@@ -26,6 +26,27 @@ This crate will be consumed as a git dependency:
 antarez-s3-storage = { git = "git@github.com:antarez-tech-solutions/antarez-s3-storage.git", branch = "main" }
 ```
 
+## Server-side encryption (AWS vs MinIO)
+
+The AWS constructor defaults server-side encryption (AES-256) **on**; the
+MinIO constructor defaults it **off** — sending the SSE header to a MinIO
+deployment without KMS/KES configured makes uploads fail. This asymmetry
+is deliberate, not an oversight.
+
+To use SSE with MinIO, the deployment must have SSE enabled (KMS-backed)
+and the caller must opt in:
+
+```rust
+// default: SSE off (safe against a plain MinIO)
+let config = S3Config::minio("bucket", "http://minio:9000");
+
+// SSE on — requires a MinIO with KMS/KES configured
+let config = S3Config::minio_with_sse("bucket", "http://minio:9000");
+```
+
+The flag is also a public field (`server_side_encryption`) for
+post-construction overrides.
+
 ## License
 
 This repository and all contributions are licensed under the [LGPL 3.0](https://www.gnu.org/licenses/lgpl-3.0.html), unless otherwise specified in subdirectory LICENSE files.
