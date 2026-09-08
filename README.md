@@ -47,6 +47,23 @@ let config = S3Config::minio_with_sse("bucket", "http://minio:9000");
 The flag is also a public field (`server_side_encryption`) for
 post-construction overrides.
 
+## Local validation
+
+Run before every commit:
+
+```bash
+cargo build --locked && cargo test   # compile + test suite
+cargo audit                          # RustSec advisories against Cargo.lock
+```
+
+This repo also ships a pre-commit hook (`.githooks/pre-commit`) that blocks
+secrets and internal endpoints from entering the public history. Activate it
+after cloning:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## License
 
 This repository and all contributions are licensed under the [LGPL 3.0](https://www.gnu.org/licenses/lgpl-3.0.html), unless otherwise specified in subdirectory LICENSE files.
